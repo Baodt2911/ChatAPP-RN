@@ -5,16 +5,13 @@ import { ScreenHeaderChatRight, ScreenHeaderChatLeft, MessageMember, MessageUser
 import Intive from '../Invite';
 import styles from './style';
 import SEND from '../../assets/icon/send-message.png'
-import useFirestore from '../../hooks/useFirestore';
+import useFirestore from '../../hooks/useFireStore';
 import { AppContext } from '../../Context/AppUser';
 import { serverTimestamp } from 'firebase/firestore';
 import { addDocument } from '../../hooks/services';
-const Chat = ({ route, navigation }) => {
-    const { roomCode, photoURL, roomName } = route.params
-    const { user } = useContext(AppContext)
+const ChatTextInput = ({ roomCode, user }) => {
     const [textMessage, SetTextMessage] = useState('')
     const [textPlaceholder, setTextPlaceHolder] = useState('Aa')
-    const [showInvite, setShowInvite] = useState(false)
     const customFocusPlaceholder = () => {
         setTextPlaceHolder('Nhập tin nhắn')
     }
@@ -36,6 +33,62 @@ const Chat = ({ route, navigation }) => {
             SetTextMessage('')
         }
     }
+    return (
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.messageInput}
+        >
+            <TextInput
+                placeholder={textPlaceholder}
+                multiline
+                style={styles.textInputMessage}
+                onChangeText={(text) => SetTextMessage(text)}
+                value={textMessage}
+                onFocus={customFocusPlaceholder}
+                onBlur={customBlurPlaceholder}
+            />
+            <TouchableOpacity onPress={handleSendMessage}>
+                <Image
+                    source={SEND}
+                    style={styles.iconSend}
+                />
+            </TouchableOpacity>
+        </KeyboardAvoidingView>
+    )
+}
+const RenderMessage = ({ conditionMessage, sortOderMessage, user }) => {
+    const dataMessage = useFirestore("messages", conditionMessage, sortOderMessage, false)
+    const renderItem = useCallback(({ item }) => {
+        if (item.uid == user.uid) {
+            return (
+                <MessageUser text={item.text} timeSend={item.createdAt?.seconds} />
+            )
+        }
+        return (
+            <MessageMember text={item.text} displayName={item.displayName} photoURL={item.photoURL} timeSend={item.createdAt?.seconds} />
+        )
+    }, [user.uid])
+    return (
+        <View>
+            {
+                !dataMessage.length ? <View style={{ height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontFamily: 'SairaCondensed-SemiBold', opacity: 0.5 }}>Chưa có tin nhắn nào</Text>
+                </View> : <FlatList
+                    style={styles.mainChat}
+                    inverted
+                    data={[...dataMessage].reverse()}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
+                />
+            }
+        </View>
+
+    )
+}
+const Chat = ({ route, navigation }) => {
+    const { roomCode, photoURL, roomName } = route.params
+    const { user } = useContext(AppContext)
+    const [showInvite, setShowInvite] = useState(false)
     const conditionMessage = useMemo(() => {
         return {
             fieldName: 'roomCode',
@@ -49,19 +102,7 @@ const Chat = ({ route, navigation }) => {
             sort: 'asc'
         }
     }, [])
-    const dataMessage = useFirestore("messages", conditionMessage, sortOderMessage, false)
     const members = useFirestore("rooms", conditionMessage, true, false)
-    console.log('re-render');
-    const renderItem = useCallback(({ item }) => {
-        if (item.uid == user.uid) {
-            return (
-                <MessageUser text={item.text} timeSend={item.createdAt?.seconds} />
-            )
-        }
-        return (
-            <MessageMember text={item.text} displayName={item.displayName} photoURL={item.photoURL} timeSend={item.createdAt?.seconds} />
-        )
-    }, [])
     return (
         <SafeAreaView style={styles.container}>
             {showInvite ? <Intive roomCode={roomCode} handleCloseInvite={() => setShowInvite(false)} /> : <></>}
@@ -74,41 +115,9 @@ const Chat = ({ route, navigation }) => {
                 <ScreenHeaderChatRight handleOpenInvite={() => setShowInvite(true)} handleShowMember={() => navigation.navigate('ShowMember', { members: members[0].members })} />
             </View>
             <View style={styles.chat}>
-                <View>
-                    {
-                        !dataMessage.length ? <View style={{ height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ fontSize: 24, fontFamily: 'SairaCondensed-SemiBold', opacity: 0.5 }}>Chưa có tin nhắn nào</Text>
-                        </View>
-                            :
-                            <FlatList
-                                style={styles.mainChat}
-                                data={dataMessage}
-                                renderItem={renderItem}
-                                keyExtractor={item => item.id}
-                            />
-                    }
-                </View>
+                <RenderMessage conditionMessage={conditionMessage} sortOderMessage={sortOderMessage} user={user} />
             </View>
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={styles.messageInput}
-            >
-                <TextInput
-                    placeholder={textPlaceholder}
-                    multiline
-                    style={styles.textInputMessage}
-                    onChangeText={(text) => SetTextMessage(text)}
-                    value={textMessage}
-                    onFocus={customFocusPlaceholder}
-                    onBlur={customBlurPlaceholder}
-                />
-                <TouchableOpacity onPress={handleSendMessage}>
-                    <Image
-                        source={SEND}
-                        style={styles.iconSend}
-                    />
-                </TouchableOpacity>
-            </KeyboardAvoidingView>
+            <ChatTextInput roomCode={roomCode} user={user} />
         </SafeAreaView>
     )
 }

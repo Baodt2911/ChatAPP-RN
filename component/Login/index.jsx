@@ -18,7 +18,7 @@ import EMAIL from '../../assets/icon/mail.png'
 import PASSWORD from '../../assets/icon/password.png'
 import SHOW_PASSWORD from '../../assets/icon/show-pass.png'
 import HIDDEN_PASSWORD from '../../assets/icon/hidden-pass.png'
-import { auth, db } from '../../firebase';
+import { auth } from '../../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { addDocument } from '../../hooks/services';
 const Login = ({ navigation }) => {
@@ -77,9 +77,25 @@ const Login = ({ navigation }) => {
                 setTextPassword('')
             }).catch((error) => {
                 setIsLoading(true)
-                Alert.alert('Thông báo', `${error.message}`, [{ text: 'OK', onPress: () => { } }])
-                setTextEmail('')
-                setTextPassword('')
+                let errorText = null
+                switch (error.message) {
+                    case "Firebase: Error (auth/invalid-email).":
+                        errorText = "Email không hợp lệ"
+                        setTextEmail('')
+                        setTextPassword('')
+                        break;
+                    case "Firebase: Error (auth/user-not-found).":
+                        errorText = "Vui lòng kiếm tra lại email"
+                        setTextEmail('')
+                        break;
+                    case "Firebase: Error (auth/wrong-password).":
+                        errorText = "Vui lòng kiếm tra lại mật khẩu"
+                        setTextPassword('')
+                        break;
+                    default:
+                        break;
+                }
+                Alert.alert('Thông báo', `${errorText}`, [{ text: 'OK', onPress: () => { } }])
             })
     }
     return (

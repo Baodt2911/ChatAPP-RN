@@ -37,6 +37,11 @@ const Register = ({ navigation }) => {
     const [isPassword, setIsPassword] = useState(false)
     const [isRetypePassword, setIsRetypePassword] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
+    const [isFirstNameError, setIsFirstNameError] = useState('gray')
+    const [isLastNameError, setIsLastNameError] = useState('gray')
+    const [isEmailError, setIsEmailError] = useState('gray')
+    const [isPasswordError, setIsPasswordError] = useState('gray')
+    const [isRetypePasswordError, setIsRetypePasswordError] = useState('gray')
     const validateFirstName = (text) => {
         const regexFirstName = /^[\p{L}\p{M}]+$/u;
         return regexFirstName.test(text)
@@ -91,7 +96,9 @@ const Register = ({ navigation }) => {
                     })
                 }).catch((error) => {
                     setIsLoading(true)
-                    Alert.alert('Thông báo', `${error.message}`, [{ text: 'OK', onPress: () => { } }])
+                    if (error.message === "Firebase: Error (auth/email-already-in-use).") {
+                        Alert.alert('Thông báo', `Email đã tồn tại trên hệ thống`, [{ text: 'OK', onPress: () => { } }])
+                    }
                     resetForm()
                 })
         }
@@ -104,7 +111,7 @@ const Register = ({ navigation }) => {
                 <Text style={styles.titleRegister}>Đăng ký</Text>
                 <View style={styles.main}>
                     <View style={styles.inputFullName}>
-                        <View style={styles.inputFirstName}>
+                        <View style={[styles.inputFirstName, { borderColor: isFirstNameError }]}>
                             <Image
                                 source={NAME}
                                 resizMode='contain'
@@ -116,6 +123,7 @@ const Register = ({ navigation }) => {
                                 onChangeText={text => {
                                     setTextFirstName(text)
                                     validateFirstName(text) ? setIsFirstName(false) : setIsFirstName(true)
+                                    validateFirstName(text) ? setIsFirstNameError('gray') : setIsFirstNameError('red')
                                 }}
                                 value={textFirstName}
                             />
@@ -123,7 +131,7 @@ const Register = ({ navigation }) => {
                                 isFirstName ? <Text style={styles.textError}>Họ không hợp lệ</Text> : <></>
                             }
                         </View>
-                        <View style={styles.inputLastName}>
+                        <View style={[styles.inputLastName, { borderColor: isLastNameError }]}>
                             <Image
                                 source={NAME}
                                 resizMode='contain'
@@ -135,6 +143,7 @@ const Register = ({ navigation }) => {
                                 onChangeText={text => {
                                     setTextLastName(text)
                                     validateLastName(text) ? setIsLastName(false) : setIsLastName(true)
+                                    validateLastName(text) ? setIsLastNameError('gray') : setIsLastNameError('red')
                                 }}
                                 value={textLastName} />
                             {
@@ -142,7 +151,7 @@ const Register = ({ navigation }) => {
                             }
                         </View>
                     </View>
-                    <View style={styles.input}>
+                    <View style={[styles.input, { borderColor: isEmailError }]}>
                         <Image
                             source={EMAIL}
                             resizMode='contain'
@@ -154,6 +163,7 @@ const Register = ({ navigation }) => {
                             onChangeText={text => {
                                 setTextEmail(text)
                                 validationEmail(text) ? setIsEmail(false) : setIsEmail(true)
+                                validationEmail(text) ? setIsEmailError('gray') : setIsEmailError('red')
                             }}
                             value={textEmail}
                         />
@@ -162,7 +172,7 @@ const Register = ({ navigation }) => {
                         }
 
                     </View>
-                    <View style={styles.input}>
+                    <View style={[styles.input, { borderColor: isPasswordError }]}>
                         <Image
                             source={PASSWORD}
                             resizMode='contain'
@@ -174,6 +184,7 @@ const Register = ({ navigation }) => {
                             onChangeText={text => {
                                 setTextPassword(text)
                                 validationPassword(text) ? setIsPassword(false) : setIsPassword(true)
+                                validationPassword(text) ? setIsPasswordError('gray') : setIsPasswordError('red')
                             }}
                             value={textPassword}
                             secureTextEntry={!showPass}
@@ -198,7 +209,7 @@ const Register = ({ navigation }) => {
                         }
 
                     </View>
-                    <View style={styles.input}>
+                    <View style={[styles.input, { borderColor: isRetypePasswordError }]}>
                         <Image
                             source={PASSWORD}
                             resizMode='contain'
@@ -210,6 +221,7 @@ const Register = ({ navigation }) => {
                             onChangeText={text => {
                                 setTextRetypePassword(text)
                                 valiadtionRetypePassword(text) ? setIsRetypePassword(false) : setIsRetypePassword(true)
+                                valiadtionRetypePassword(text) ? setIsRetypePasswordError('gray') : setIsRetypePasswordError('red')
                             }}
                             value={textRetypePassword}
                             secureTextEntry={!showPassRetype}

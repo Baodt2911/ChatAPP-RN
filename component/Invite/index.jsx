@@ -1,15 +1,14 @@
 import {
     View, Text, TouchableOpacity, StyleSheet, Image
 } from 'react-native'
-import Clipboard from '@react-native-clipboard/clipboard';
 import React, { useState } from 'react'
 import CLOSE from '../../assets/icon/close.png'
+import * as Clipboard from 'expo-clipboard';
 const Intive = ({ roomCode, handleCloseInvite }) => {
     const [textBtn, setTextBtn] = useState('Sao chép')
-    const handleCopy = () => {
+    const handleCopy = async () => {
         setTextBtn('Đã sao chép')
-        console.log(Clipboard);
-        Clipboard.setString(roomCode)
+        await Clipboard.setStringAsync(`${roomCode}:Nhập mã mời để vào nhóm của mình nhé`)
     }
     return (
         <View style={styles.container}>

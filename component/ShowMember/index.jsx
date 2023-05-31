@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator } from 'react-native'
-import useFirestore from '../../hooks/useFirestore'
+import useFirestore from '../../hooks/useFireStore'
 const ShowMember = ({ route }) => {
     const { members } = route.params
     const [isLoading, setIsLoading] = useState(true)

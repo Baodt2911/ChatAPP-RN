@@ -6,7 +6,7 @@ import CREATEGROUP from '../../assets/icon/create.png'
 import styles from './style'
 import JoinRoom from '../JoinRoom';
 import { AppContext } from '../../Context/AppUser';
-import useFirestore from '../../hooks/useFirestore';
+import useFirestore from '../../hooks/useFireStore';
 import { ItemRoom } from '../ItemRoom';
 const Rooms = ({ navigation }) => {
     const { user: { uid } } = useContext(AppContext)

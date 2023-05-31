@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Text, Image, StyleSheet } from "react-native";
+import { View, TouchableOpacity, Text, Image, StyleSheet, ActivityIndicator } from "react-native";
 import INVITE from '../../assets/icon/invite.png'
 import OPTION from '../../assets/icon/option.png'
 import BACK from '../../assets/icon/back.png'
@@ -80,7 +80,10 @@ export const MessageMember = ({ text, displayName, photoURL, timeSend }) => {
                 <Text style={styles.nameMember}>{displayName}</Text>
                 <View style={styles.mainMessage}>
                     <Text style={styles.messageText}>{text}</Text>
-                    <Text style={styles.timeSend}>{formatDate(timeSend)}</Text>
+                    {
+                        timeSend ? <Text style={styles.timeSend}>{formatDate(timeSend)}</Text> :
+                            <ActivityIndicator color="gray" />
+                    }
                 </View>
             </View>
         </View>
@@ -92,7 +95,10 @@ export const MessageUser = ({ text, timeSend }) => {
             <View>
                 <View style={styles.mainMessageActive}>
                     <Text style={styles.messageTextActive}>{text}</Text>
-                    <Text style={styles.timeSendActive}>{formatDate(timeSend)}</Text>
+                    {
+                        timeSend ? <Text style={styles.timeSendActive}>{formatDate(timeSend)}</Text> :
+                            <ActivityIndicator color="gray" />
+                    }
                 </View>
             </View>
         </View>
