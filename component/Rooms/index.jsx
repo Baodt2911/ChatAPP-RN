@@ -62,13 +62,13 @@ const Rooms = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             {isLoading ?
-                <ActivityIndicator size="large" color="gray" style={{ marginTop: 50 }} />
-                :
-                <FlatList style={styles.listRooms}
-                    data={roomList}
-                    renderItem={renderRoomList}
-                    keyExtractor={item => item.id}
-                />
+                <ActivityIndicator size="large" color="gray" style={{ marginTop: 50 }} /> :
+                roomList.length === 0 ? <Text style={{ fontFamily: 'SairaCondensed-Medium', fontSize: 20, marginTop: 50 }}>Bạn chưa vào nhóm nào</Text> :
+                    <FlatList style={styles.listRooms}
+                        data={roomList}
+                        renderItem={renderRoomList}
+                        keyExtractor={item => item.id}
+                    />
             }
 
         </SafeAreaView>

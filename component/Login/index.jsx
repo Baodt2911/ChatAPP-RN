@@ -20,7 +20,6 @@ import SHOW_PASSWORD from '../../assets/icon/show-pass.png'
 import HIDDEN_PASSWORD from '../../assets/icon/hidden-pass.png'
 import { auth } from '../../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { addDocument } from '../../hooks/services';
 const Login = ({ navigation }) => {
     const [textEmail, setTextEmail] = useState('')
     const [textPassword, setTextPassword] = useState('')
@@ -36,7 +35,6 @@ const Login = ({ navigation }) => {
         setShowPass(!showPass)
     }
     const handleLogin = () => {
-        setIsLoading(false)
         if (textEmail == '' && textPassword == '') {
             Alert.alert('Thông báo', 'Vui lòng nhập đầy đủ thông tin', [{ text: 'OK', onPress: () => { } }])
             setIsLoading(true)
@@ -52,27 +50,28 @@ const Login = ({ navigation }) => {
             setIsLoading(true)
             return
         }
+        setIsLoading(false)
         signInWithEmailAndPassword(auth, textEmail, textPassword)
             .then((userCredential) => {
                 const user = userCredential.user
-                const { displayName, email, photoURL, uid } = userCredential.user
-                const checkIfNewUser = () => {
-                    if (user) {
-                        const creationTime = user.metadata.creationTime;
-                        const lastSignInTime = user.metadata.lastSignInTime;
-                        return creationTime == lastSignInTime
-                    }
-                };
-                if (checkIfNewUser()) {
-                    addDocument('users', {
-                        displayName,
-                        email,
-                        photoURL,
-                        uid,
-                    })
-                }
                 setIsLoading(true)
-                Alert.alert('Thông báo', `Đăng nhập thành công`, [{ text: 'OK', onPress: () => { } }])
+                Alert.alert('Thông báo', `Đăng nhập thành công`, [{
+                    text: 'OK', onPress: () => {
+                        const checkIfNewUser = () => {
+                            if (user) {
+                                const creationTime = user.metadata.creationTime;
+                                const lastSignInTime = user.metadata.lastSignInTime;
+                                return creationTime == lastSignInTime
+                            }
+                        };
+                        if (checkIfNewUser() || !(user.photoURL)) {
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'ChooseAvatar' }]
+                            })
+                        }
+                    }
+                }])
                 setTextEmail('')
                 setTextPassword('')
             }).catch((error) => {

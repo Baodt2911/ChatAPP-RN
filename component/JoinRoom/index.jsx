@@ -29,9 +29,11 @@ const JoinRoom = ({ handleCloseJoinRoom }) => {
                 members: arrayUnion(uid)
             })
             setIsLoading(false)
+            setRoomCode('')
             Alert.alert('Thông báo', 'Đã vào phòng', [{ text: 'OK', onPress: handleCloseJoinRoom }])
         } catch (error) {
             setIsLoading(false)
+            setRoomCode('')
             Alert.alert('Thông báo', 'Vui lòng kiểm tra lại mã mời', [{ text: 'OK', onPress: () => { } }])
         }
     }
@@ -49,8 +51,8 @@ const JoinRoom = ({ handleCloseJoinRoom }) => {
                 <TextInput
                     style={styles.inputCode}
                     placeholder='VD:HGTEAO'
-                    onChangeText={(text) => setRoomCode(text)}
                     value={roomCode}
+                    onChangeText={(text) => setRoomCode(text)}
                 />
                 {
                     isLoading ? <ActivityIndicator color='gray' /> :

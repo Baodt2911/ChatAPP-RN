@@ -10,6 +10,7 @@ import Chat from '../component/Chat';
 import { useFonts } from 'expo-font';
 import Register from '../component/Register';
 import { AppUser } from '../Context/AppUser';
+import ChooseAvatar from '../component/Choose_Avatar';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name='Register' component={Register} />
           <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name='ChooseAvatar' component={ChooseAvatar} />
           <Stack.Screen name="CreateRoom" component={CreateRoom} options={{ headerShown: true, headerTitle: '', headerStyle: { backgroundColor: '#f5f5f5' } }} />
           <Stack.Screen name='Chat' component={Chat} />
           <Stack.Screen name='ShowMember' component={ShowMember} options={{ headerShown: true, headerTitle: '', headerStyle: { backgroundColor: '#f5f5f5' } }} />

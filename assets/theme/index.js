@@ -5,25 +5,25 @@ import BACK from '../../assets/icon/back.png'
 import { formatDate } from "../../hooks/formatDate";
 export const ScreenHeaderChatRight = ({ handleOpenInvite, handleShowMember }) => {
     return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, width: '20%' }}>
             <TouchableOpacity
                 style={{
                     flexDirection: 'row',
                     alignItems: 'center',
-                    gap: 10,
+                    gap: 5,
                     borderWidth: 1,
                     borderColor: 'gray',
-                    paddingHorizontal: 10,
-                    paddingVertical: 5
+                    paddingHorizontal: 8,
+                    paddingVertical: 3
                 }}
                 onPress={handleOpenInvite}
             >
                 <Image
                     source={INVITE}
                     resizeMode="contain"
-                    style={{ width: 15, height: 15 }}
+                    style={{ width: 10, height: 10 }}
                 />
-                <Text style={{ fontFamily: 'SairaCondensed-Medium', fontSize: 16 }}>Mời</Text>
+                <Text style={{ fontFamily: 'SairaCondensed-Medium', fontSize: 13 }}>Mời</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={handleShowMember}
@@ -59,10 +59,12 @@ export const ScreenHeaderChatLeft = ({ roomName, photoURL, handleBack }) => {
                 }}
             />
             <Text
+                numberOfLines={2}
                 style={{
                     fontSize: 20,
                     fontFamily: 'SairaCondensed-SemiBold',
-                    width: 130,
+                    width: 180,
+                    lineHeight: 25
                 }}
             >{roomName}</Text>
         </View>
@@ -71,11 +73,17 @@ export const ScreenHeaderChatLeft = ({ roomName, photoURL, handleBack }) => {
 export const MessageMember = ({ text, displayName, photoURL, timeSend }) => {
     return (
         <View style={styles.itemMessage}>
-            <Image
-                source={{ uri: `${photoURL}` }}
-                resizeMode='cover'
-                style={styles.imageUser}
-            />
+            {
+                photoURL?.length === 1 ?
+                    <View style={styles.imageUser}>
+                        <Text style={styles.textImage}>{photoURL}</Text>
+                    </View> :
+                    <Image
+                        source={{ uri: `${photoURL}` }}
+                        resizeMode='cover'
+                        style={styles.imageUser}
+                    />
+            }
             <View>
                 <Text style={styles.nameMember}>{displayName}</Text>
                 <View style={styles.mainMessage}>
@@ -114,11 +122,17 @@ const styles = StyleSheet.create({
         width: 30,
         height: 30,
         borderRadius: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#dadadacc'
+    },
+    textImage: {
+        fontSize: 20,
+        fontFamily: 'SairaCondensed-SemiBold',
     },
     nameMember: {
         fontSize: 16,
         fontFamily: 'SairaCondensed-SemiBold',
-        marginLeft: 10,
     },
     mainMessage: {
         flexDirection: 'row',

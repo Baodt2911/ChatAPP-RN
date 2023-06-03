@@ -26,21 +26,22 @@ const ShowMember = ({ route }) => {
     const renderMembers = useCallback(({ item }) =>
         <View style={styles.itemMember}>
             {
-                item.photoURL ?
+                item.photoURL?.length === 1 ?
+                    <View style={styles.imageMember}>
+                        <Text style={styles.textImage}>{item.photoURL}</Text>
+                    </View> :
                     <Image
                         source={{ uri: `${item.photoURL}` }}
                         resizeMode='cover'
                         style={styles.imageMember}
-                    /> :
-                    <View style={styles.imageMember}>
-                        <Text style={styles.textImage}>{item.displayName?.charAt(0).toUpperCase()}</Text>
-                    </View>
+                    />
+
             }
             <Text style={styles.nameMember}>{item.displayName}</Text>
         </View>, [])
     return (
         <View style={styles.container}>
-            <Text style={styles.textHeader}>Tất cả thành viên</Text>
+            <Text style={styles.textHeader}>Tất cả thành viên <Text style={{ fontSize: 24, color: '#333' }}>({dataMembers.length})</Text></Text>
             {
                 isLoading ? <ActivityIndicator color="gray" />
                     :
